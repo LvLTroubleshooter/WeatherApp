@@ -1,28 +1,70 @@
 {% extends 'weather/wrapper.html' %}
+{% load static %}
 
 {% block weather %}
-<div class="container d-flex justify-content-center align-items-center m-5">
-    <form method="POST" class="w-50 d-flex flex-row">
+<style>
+/* Custom CSS for consistent card appearance */
+.card-weather {
+    min-height: 200px; /* Adjust the height as needed */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Adds a subtle shadow around the card */
+    transition: 0.3s; /* Smooth transition for mouse hover effect */
+    border-radius: 5px; /* Slightly rounded corners for a softer look */
+    display: flex; /* Use flexbox for internal alignment */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center children vertically */
+    align-items: center; /* Center children horizontally */
+    padding: 20px; /* Spacing inside the card */
+    background: #fff; /* Card background color */
+}
+
+.card-weather:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* More prominent shadow on hover */
+}
+
+/* Weather icon style */
+.weather-icon {
+    max-height: 50px; /* Limit the size of the weather icon */
+    width: auto; /* Keep the aspect ratio */
+    margin-bottom: 20px; /* Space below the icon */
+}
+
+/* Adjustments for text alignment and color */
+.card-title, .card-text {
+    text-align: center; /* Center-align text */
+    color: #333; /* Darker text for better readability on light background */
+}
+
+/* Smaller text for the temperature */
+.temp-text {
+    font-size: 1rem; /* Smaller font size for the temperature */
+    color: #555; /* Slightly lighter color for less emphasis */
+}
+</style>
+
+<!-- Weather Form -->
+<div class="container my-5">
+    <form method="POST" class="d-flex justify-content-center gap-2">
         {% csrf_token %}
-        <input type="text" class="form-control" name="city" placeholder="Write City Name...">
-        <button class="btn btn-primary" value="submit">Add City</button>
+        <input type="text" class="form-control" name="city" placeholder="Enter City Name">
+        <button type="submit" class="btn btn-primary">Add City</button>
     </form>
 </div>
 
-<div class="container">
-    <div class="row w-100 d-flex flex-column justify-content-center align-items-center">
+<!-- Weather Display Cards -->
+<div class="container py-5">
+    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
         {% for weather in weather_data %}
-        <div class="col-8 w-auto m-4 pe-4 d-flex flex-row border border-light rounded">
-            <div>
-                <img src="http://openweathermap.org/img/w/{{ weather.icon }}.png">
-            </div>
-            <div>
-                <div><h2>{{ weather.desc }}</h2></div>
-                <div><p>{{ weather.city }} - {{ weather.temp }} F</p></div>
+        <div class="col">
+            <div class="card-weather">
+                <img src="http://openweathermap.org/img/w/{{ weather.icon }}.png" class="weather-icon" alt="{{ weather.desc }}">
+                <h5 class="card-title">{{ weather.city }}</h5>
+                <p class="card-text">{{ weather.desc }}</p>
+                <p class="card-text temp-text">{{ weather.temp }} F</p>
             </div>
         </div>
+        {% empty %}
+        <p class="text-center">No weather data to display.</p>
         {% endfor %}
     </div>
 </div>
-
 {% endblock %}
